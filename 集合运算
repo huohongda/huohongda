@@ -1,0 +1,286 @@
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+
+//全集
+vector<char> UniversalSet()
+{
+	vector<char> universalSet;
+	string setName1 = "全集";
+	universalSet = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'
+	,'R','S','T','U','V','W','X','Y','Z' };
+	return universalSet;
+}
+
+//显示结果
+void ShowResult(vector<char> set, string setName)
+{
+	if (set.size() == 0)
+	{
+		cout << setName << "为空集！" << endl;
+	}
+	else
+	{
+		cout << setName << ":(";
+		for (unsigned int k = 0; k < set.size(); k++)
+		{
+			if (k == set.size() - 1)
+			{
+				cout << set[k];
+			}
+			else
+			{
+				cout << set[k] << ",";
+			}
+		}
+		cout << ")" << endl;
+	}
+}
+
+//交集
+void Intersection(vector<char>set_A, vector<char>set_B)
+{
+	string setName = "交集";
+	vector<char> interSet;
+	int length_1 = set_A.size();//集合A元素个数
+	int length_2 = set_B.size();//集合B元素个数
+	for (int i = 0; i < length_1; i++)
+	{
+		for (int j = 0; j < length_2; j++)
+		{
+			if (set_A[i] == set_B[j])
+			{
+				interSet.push_back(set_A[i]);
+			}
+		}
+	}
+	ShowResult(interSet, setName);
+}
+//并集
+void Union(vector<char> set_A, vector<char> set_B)
+{
+	vector<char> unionSet;
+	int length_1 = set_A.size();//集合A元素个数
+	int length_2 = set_B.size();//集合B元素个数
+	for (int i = 0; i < length_1; i++)
+	{
+		unionSet.push_back(set_A[i]);
+	}
+	for (int j = 0; j < length_2; j++)
+	{
+		bool difference = true;
+		for (int i = 0; i < length_1; i++)
+		{
+			if (unionSet[i] == set_B[j])
+			{
+				difference = false;
+				break;
+			}
+		}
+		if (difference)
+		{
+			unionSet.push_back(set_B[j]);
+		}
+	}
+	ShowResult(unionSet, "并集");
+}
+//差集
+void Subtraction(vector<char> set_A, vector<char> set_B, string subName)
+{
+	vector<char> subSet;
+	int length_1 = set_A.size();//集合A元素个数
+	int length_2 = set_B.size();//集合B元素个数
+	for (int i = 0; i < length_1; i++)
+	{
+		subSet.push_back(set_A[i]);
+	}
+	int elementPos = 0;
+	for (int j = 0; j < length_2; j++)
+	{
+		for (unsigned int k = 0; k < subSet.size(); k++)
+		{
+			elementPos = k;
+			if (set_B[j] == subSet[k])
+			{
+				break;
+			}
+		}
+		if (subSet.size() != 0)
+		{
+			if (set_B[j] == subSet[elementPos])
+			{
+				subSet.erase(subSet.begin() + elementPos);
+			}
+		}
+
+	}
+	ShowResult(subSet, subName);
+}
+//异或
+void SysmmetricDifference(vector<char>set_A, vector<char>set_B)
+{
+	vector<char> set;//异或
+	vector<char> sumSet;//并集
+	vector<char> interSet;//交集
+	int length_1 = set_A.size();//集合A元素个数
+	int length_2 = set_B.size();//集合B元素个数
+	for (int i = 0; i < length_1; i++)//并集
+	{
+		sumSet.push_back(set_A[i]);
+	}
+	for (int i = 0; i < length_2; i++)
+	{
+		sumSet.push_back(set_B[i]);
+	}
+
+	for (int i = 0; i < length_1; i++)//交集
+	{
+		for (int j = 0; j < length_2; j++)
+		{
+			if (set_A[i] == set_B[j])
+			{
+				interSet.push_back(set_A[i]);
+			}
+		}
+	}
+	for (unsigned int i = 0; i < sumSet.size(); i++)//异或
+	{
+		bool isDifference = true;
+		for (unsigned int j = 0; j < interSet.size(); j++)
+		{
+			if (sumSet[i] == interSet[j])
+			{
+				isDifference = false;
+				break;
+			}
+		}
+		if (isDifference == true)
+		{
+			set.push_back(sumSet[i]);
+		}
+	}
+	ShowResult(set, "异或");
+}
+//补集
+void ComplementOperation(vector<char> set, string setName)
+{
+	vector<char>complementarySet;
+	vector<char>universalSet = UniversalSet();
+	int length_1 = set.size();
+	int length_2 = universalSet.size();
+	for (int i = 0; i < length_2; i++)
+	{
+		bool difference = true;
+		for (int j = 0; j < length_1; j++)
+		{
+			if (universalSet[i] == set[j])
+			{
+				difference = false;
+				break;
+			}
+		}
+		if (difference)
+		{
+			complementarySet.push_back(universalSet[i]);
+		}
+	}
+	ShowResult(complementarySet, setName);
+}
+vector<char> InputSet(vector<char> set, string setName)//输入
+{
+	cout << "请输入集合" << setName << endl;
+	int length;
+	char temp;
+	cout << "请输入集合" << setName << "的元素个数：" << endl;
+	cin >> length;
+	cout << "请分别输入集合" << setName << "的元素" << endl;
+	for (int i = 0; i < length; i++)
+	{
+		cin >> temp;
+		if (set.size() != 0)//判断某个字母是否重新输入
+		{
+			bool difference = false;
+			while (!difference)
+			{
+				for (unsigned int j = 0; j < set.size(); j++)
+				{
+					if (temp != set[j])
+					{
+						difference = true;
+					}
+					else
+					{
+						cout << "该字符已存在集合中！请重新输入！" << endl;
+						difference = false;
+						cin >> temp;
+						break;
+					}
+				}
+			}
+			if (difference)
+			{
+				set.push_back(temp);//将一个新元素加到最后面
+			}
+		}
+		else
+		{
+			set.push_back(temp);
+		}
+	}
+	return set;
+}
+
+void Menu()
+{
+	cout << "***********************************************" << endl;
+	cout << "输入相应数字进行操作：" << endl;
+	cout << "1、求并集" << endl
+		<< "2、求交集 " << endl
+		<< "3、求差集" << endl
+		<< "4、求异或 " << endl
+		<< "5、求补集" << endl
+		<< "6、重新输入集合" << endl
+		<< "7、退出程序" << endl;
+	cout << "***********************************************" << endl;
+}
+
+int main()
+{
+	vector<char>set_A;//定义两个集合数组
+	vector<char>set_B;
+	int operateNum;
+	bool reInput = true;
+	while (reInput)
+	{
+		//开始时就从键盘获取用户输入两个集合
+		set_A = InputSet(set_A, "A");
+		set_B = InputSet(set_B, "B");
+		ShowResult(set_A, "集合A");
+		ShowResult(set_B, "集合B");
+		Menu();
+		bool isContinue = true;
+
+		//用户想要进行的操作
+		while (isContinue)
+		{
+			cin >> operateNum;
+			switch (operateNum)
+			{
+			case 1: Union(set_A, set_B); break;//并集
+			case 2:	Intersection(set_A, set_B); break;//交集
+			case 3:	Subtraction(set_A, set_B, "差集A-B");//差集 
+				Subtraction(set_B, set_A, "差集B-A"); break;
+			case 4: SysmmetricDifference(set_A, set_B); break;//异或
+			case 5: ComplementOperation(set_A, "A的补集");//补集
+				ComplementOperation(set_B, "B的补集"); break;
+			case 6: isContinue = false; //重新输入集合
+				set_A.clear();
+				set_B.clear(); break;
+			case 7: isContinue = false; reInput = false; break;//退出
+			default:cout << "请重新输入" << endl;
+				break;
+			}
+		}
+	}
+}
